@@ -13,9 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HomeScreen(
-    onGoToFavourites: () -> Unit
-) {
+fun HomeScreen() {
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -28,10 +26,6 @@ fun HomeScreen(
 
         Button(onClick = { showDialog = true }) {
             Text("Vtip")
-        }
-
-        Button(onClick = onGoToFavourites) {
-            Text("Oblíbené")
         }
     }
 
