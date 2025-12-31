@@ -4,17 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jokegenerator.ui.vm.JokeViewModel
 
 @Composable
-fun HomeScreen() {
-    var showDialog by remember { mutableStateOf(false) }
+fun HomeScreen(vm: JokeViewModel = viewModel()) {
+    val state by vm.state.collectAsState()
 
     Column(
         modifier = Modifier
@@ -22,23 +24,37 @@ fun HomeScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Hlavní obrazovka", style = MaterialTheme.typography.headlineSmall)
+        Text("Joke Generator", style = MaterialTheme.typography.headlineSmall)
 
-        Button(onClick = { showDialog = true }) {
-            Text("Vtip")
-        }
-    }
+        when {
+            state.isLoading -> {
+                CircularProgressIndicator()
+            }
 
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Info") },
-            text = { Text("Stahuji...") },
-            confirmButton = {
-                Button(onClick = { showDialog = false }) {
-                    Text("OK")
+            state.error != null -> {
+                Text("Chyba: ${state.error}", color = MaterialTheme.colorScheme.error)
+                Button(onClick = { vm.loadJoke() }) {
+                    Text("Zkusit znovu")
                 }
             }
-        )
+
+            state.joke != null -> {
+                Text(state.joke!!.asDisplayText(), style = MaterialTheme.typography.bodyLarge)
+
+                Button(onClick = { vm.loadJoke() }) {
+                    Text("Nový")
+                }
+
+                Button(onClick = { }) {
+                    Text("Uložit")
+                }
+            }
+
+            else -> {
+                Button(onClick = { vm.loadJoke() }) {
+                    Text("Vtip")
+                }
+            }
+        }
     }
 }
