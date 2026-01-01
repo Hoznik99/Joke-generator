@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jokegenerator.ui.vm.JokeViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(vm: JokeViewModel = viewModel()) {
@@ -25,6 +26,10 @@ fun HomeScreen(vm: JokeViewModel = viewModel()) {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text("Joke Generator", style = MaterialTheme.typography.headlineSmall)
+
+        if (state.savedInfo != null) {
+            Text(state.savedInfo!!, style = MaterialTheme.typography.bodyMedium)
+        }
 
         when {
             state.isLoading -> {
@@ -45,7 +50,7 @@ fun HomeScreen(vm: JokeViewModel = viewModel()) {
                     Text("Nový")
                 }
 
-                Button(onClick = { }) {
+                Button(onClick = { vm.saveCurrentJokeText() }) {
                     Text("Uložit")
                 }
             }
@@ -55,6 +60,13 @@ fun HomeScreen(vm: JokeViewModel = viewModel()) {
                     Text("Vtip")
                 }
             }
+        }
+    }
+
+    if (state.savedInfo != null) {
+        LaunchedEffect(state.savedInfo) {
+            delay(1200)
+            vm.clearSavedInfo()
         }
     }
 }

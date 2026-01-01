@@ -1,8 +1,11 @@
 package com.example.jokegenerator.ui.vm
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jokegenerator.data.Network
+import com.example.jokegenerator.data.local.DatabaseProvider
+import com.example.jokegenerator.data.local.FavouriteJokeEntity
 import com.example.jokegenerator.data.remote.JokeDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,10 +14,12 @@ import kotlinx.coroutines.launch
 data class JokeUiState(
     val isLoading: Boolean = false,
     val joke: JokeDto? = null,
-    val error: String? = null
+    val error: String? = null,
+    val savedInfo: String? = null
 )
 
-class JokeViewModel : ViewModel() {
+class JokeViewModel(app: Application) : AndroidViewModel(app) {
+
     private val _state = MutableStateFlow(JokeUiState())
     val state: StateFlow<JokeUiState> = _state
 
@@ -30,7 +35,24 @@ class JokeViewModel : ViewModel() {
         }
     }
 
-    fun clearJoke() {
-        _state.value = JokeUiState()
+    fun saveCurrentJokeText() {
+        val current = _state.value.joke ?: return
+        val text = current.asDisplayText().trim()
+        if (text.isBlank()) return
+
+        viewModelScope.launch {
+            val db = DatabaseProvider.get(getApplication())
+            db.favouriteJokeDao().insert(
+                FavouriteJokeEntity(
+                    text = text,
+                    createdAt = System.currentTimeMillis()
+                )
+            )
+            _state.value = _state.value.copy(savedInfo = "Uloženo")
+        }
+    }
+
+    fun clearSavedInfo() {
+        _state.value = _state.value.copy(savedInfo = null)
     }
 }
