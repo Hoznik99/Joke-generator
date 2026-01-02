@@ -13,9 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jokegenerator.ui.theme.JokeGeneratorTheme
 import com.example.jokegenerator.ui.nav.AppNav
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
