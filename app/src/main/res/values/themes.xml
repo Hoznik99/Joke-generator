@@ -5,7 +5,7 @@
     </style>
 
     <style name="Theme.JokeGenerator.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.JokeGenerator</item>
     </style>
